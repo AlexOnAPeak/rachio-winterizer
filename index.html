@@ -95,6 +95,51 @@
             margin-top: 5px;
         }
 
+        .instructions {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            color: #333;
+            font-size: 15px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #555;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            margin-bottom: 6px;
+        }
+
+        .instructions a {
+            color: #51A5F8;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .instructions a:hover {
+            text-decoration: underline;
+        }
+
+        .external-link-icon {
+            display: inline-block;
+            width: 0.85em;
+            height: 0.85em;
+            margin-left: 3px;
+            vertical-align: middle;
+            opacity: 0.7;
+        }
+
         .btn {
             background: linear-gradient(135deg, #51A5F8 0%, #6BC079 100%);
             color: white;
@@ -262,14 +307,22 @@
 <body>
     <div class="container">
         <h1>Rachio Winterizer</h1>
-        <p class="subtitle">Continuously cycle through your irrigation zones to winterize them, with a wait time between each run to allow pressure to build back up in your compressor and sprinkler lines. This tool runs entirely in your browser and does not send any data to any server other than Rachio's API.</p>
+        <p class="subtitle">Winterize your irrigation system by attaching an air compressor and using this tool, in tandem with your Rachio controller, to continuously cycle through your zones to blow them out with air. A wait time between each run allows pressure to build back up in your compressor and sprinkler lines; choose a long enough time to allow your compressor to periodically fully recharge.<br><br>This tool runs entirely in your browser and does not send data to any server other than Rachio's API.</p>
 
         <div id="error" class="error" style="display: none;"></div>
 
         <!-- Step 1: API Key -->
         <div id="step1" class="step active">
+            <div class="instructions">
+                <h3>Getting your Rachio API key</h3>
+                <ol>
+                    <li>Log in at <a href="https://app.rach.io/" target="_blank" rel="noopener noreferrer">https://app.rach.io/<svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6m-7 1l9-9m-5 0h5v5"></path></svg></a> or open your Rachio app</li>
+                    <li>Click your profile icon (Settings)</li>
+                    <li>Click Get API Key / copy your key</li>
+                </ol>
+            </div>
             <div class="form-group">
-                <label for="apiKey">Rachio API Key</label>
+                <label for="apiKey">Rachio API key</label>
                 <input type="text" id="apiKey" placeholder="Enter your API key">
                 <div class="help-text">Your API key will be stored locally in your browser</div>
             </div>
@@ -279,7 +332,7 @@
         <!-- Step 2: Controller Selection (if multiple) -->
         <div id="step2" class="step">
             <div class="form-group">
-                <label for="controllerSelect">Select Controller</label>
+                <label for="controllerSelect">Select controller</label>
                 <select id="controllerSelect">
                     <option value="">Choose a controller...</option>
                 </select>
@@ -289,18 +342,18 @@
 
         <!-- Step 3: Zone Selection and Parameters -->
         <div id="step3" class="step">
-            <h2>Select Zones to Cycle</h2>
+            <h2>Select zones to cycle</h2>
             <div class="zone-list" id="zoneList"></div>
 
             <h2>Parameters</h2>
             <div class="parameters">
                 <div class="form-group">
-                    <label for="runDuration">Run Duration (seconds)</label>
+                    <label for="runDuration">Run duration (seconds)</label>
                     <input type="number" id="runDuration" value="10" min="1">
                     <div class="help-text">How long each zone runs</div>
                 </div>
                 <div class="form-group">
-                    <label for="waitDuration">Wait Duration (seconds)</label>
+                    <label for="waitDuration">Wait duration (seconds)</label>
                     <input type="number" id="waitDuration" value="60" min="0">
                     <div class="help-text">Wait time between zones</div>
                 </div>
