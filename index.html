@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rachio Winterizer</title>
     <style>
       * {
@@ -12,9 +12,8 @@
       }
 
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-          Oxygen, Ubuntu, Cantarell, sans-serif;
-        background: linear-gradient(135deg, #51a5f8 0%, #6bc079 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #51A5F8 0%, #6BC079 100%);
         min-height: 100vh;
         padding: 20px;
         display: flex;
@@ -32,7 +31,7 @@
       }
 
       h1 {
-        color: #51a5f8;
+            color: #51A5F8;
         margin-bottom: 10px;
         font-size: 28px;
       }
@@ -87,7 +86,7 @@
       input[type="number"]:focus,
       select:focus {
         outline: none;
-        border-color: #51a5f8;
+            border-color: #51A5F8;
       }
 
       .help-text {
@@ -123,7 +122,7 @@
       }
 
       .instructions a {
-        color: #51a5f8;
+            color: #51A5F8;
         text-decoration: none;
         font-weight: 500;
       }
@@ -142,7 +141,7 @@
       }
 
       .btn {
-        background: linear-gradient(135deg, #51a5f8 0%, #6bc079 100%);
+            background: linear-gradient(135deg, #51A5F8 0%, #6BC079 100%);
         color: white;
         border: none;
         padding: 12px 30px;
@@ -221,7 +220,7 @@
       }
 
       .zone-status.enabled {
-        background: #6bc079;
+            background: #6BC079;
         color: white;
       }
 
@@ -246,7 +245,7 @@
         border: 2px solid #e0e0e0;
         border-radius: 6px;
         padding: 15px;
-        font-family: "Courier New", monospace;
+            font-family: 'Courier New', monospace;
         font-size: 13px;
         overflow-y: auto;
         background: #f9f9f9;
@@ -264,7 +263,7 @@
       }
 
       .reminder {
-        background: linear-gradient(135deg, #ffa726 0%, #ff7043 100%);
+            background: linear-gradient(135deg, #FFA726 0%, #FF7043 100%);
         color: white;
         padding: 14px 18px;
         border-radius: 6px;
@@ -272,7 +271,7 @@
         margin-bottom: 15px;
         font-weight: 500;
         font-size: 14px;
-        border-left: 4px solid #f57c00;
+            border-left: 4px solid #F57C00;
         box-shadow: 0 2px 8px rgba(255, 167, 38, 0.3);
         display: none;
       }
@@ -294,12 +293,8 @@
       }
 
       @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
       }
 
       .button-group {
@@ -312,59 +307,26 @@
   <body>
     <div class="container">
       <h1>Rachio Winterizer</h1>
-      <p class="subtitle">
-        Winterize your irrigation system by attaching an air compressor and
-        using this tool, in tandem with your Rachio controller, to continuously
-        cycle through your zones to blow them out with air. A wait time between
-        each run allows pressure to build back up in your compressor and
-        sprinkler lines; choose a long enough time to allow your compressor to
-        periodically fully recharge.<br /><br />This tool runs entirely in your
-        browser and does not send data to any server other than Rachio's API.
-      </p>
+        <p class="subtitle">Winterize your irrigation system by attaching an air compressor and using this tool, in tandem with your Rachio controller, to continuously cycle through your zones to blow them out with air. A wait time between each run allows pressure to build back up in your compressor and sprinkler lines; choose a long enough time to allow your compressor to periodically fully recharge.<br><br>This tool runs entirely in your browser and does not send data to any server other than Rachio's API.</p>
 
-      <div id="error" class="error" style="display: none"></div>
+        <div id="error" class="error" style="display: none;"></div>
 
       <!-- Step 1: API Key -->
       <div id="step1" class="step active">
         <div class="instructions">
           <h3>Getting your Rachio API key</h3>
           <ol>
-            <li>
-              Log in at
-              <a
-                href="https://app.rach.io/"
-                target="_blank"
-                rel="noopener noreferrer"
-                >https://app.rach.io/<svg
-                  class="external-link-icon"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6m-7 1l9-9m-5 0h5v5"
-                  ></path></svg
-              ></a>
-              or open your Rachio app
-            </li>
+                    <li>Log in at <a href="https://app.rach.io/" target="_blank" rel="noopener noreferrer">https://app.rach.io/<svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6m-7 1l9-9m-5 0h5v5"></path></svg></a> or open your Rachio app</li>
             <li>Click your profile icon (Settings)</li>
             <li>Click Get API Key / copy your key</li>
           </ol>
         </div>
         <div class="form-group">
           <label for="apiKey">Rachio API key</label>
-          <input type="text" id="apiKey" placeholder="Enter your API key" />
-          <div class="help-text">
-            Your API key will be stored locally in your browser
+                <input type="text" id="apiKey" placeholder="Enter your API key">
+                <div class="help-text">Your API key will be stored locally in your browser</div>
           </div>
-        </div>
-        <button class="btn" id="submitApiKeyBtn" onclick="submitApiKey()">
-          Submit
-        </button>
+            <button class="btn" id="submitApiKeyBtn" onclick="submitApiKey()">Submit</button>
       </div>
 
       <!-- Step 2: Controller Selection (if multiple) -->
@@ -375,13 +337,7 @@
             <option value="">Choose a controller...</option>
           </select>
         </div>
-        <button
-          class="btn"
-          id="submitControllerBtn"
-          onclick="submitController()"
-        >
-          Continue
-        </button>
+            <button class="btn" id="submitControllerBtn" onclick="submitController()">Continue</button>
       </div>
 
       <!-- Step 3: Zone Selection and Parameters -->
@@ -393,12 +349,12 @@
         <div class="parameters">
           <div class="form-group">
             <label for="runDuration">Run duration (seconds)</label>
-            <input type="number" id="runDuration" value="10" min="1" />
+                    <input type="number" id="runDuration" value="10" min="1">
             <div class="help-text">How long each zone runs</div>
           </div>
           <div class="form-group">
             <label for="waitDuration">Wait duration (seconds)</label>
-            <input type="number" id="waitDuration" value="60" min="0" />
+                    <input type="number" id="waitDuration" value="60" min="0">
             <div class="help-text">Wait time between zones</div>
           </div>
           <div class="form-group">
@@ -412,26 +368,14 @@
 
         <div class="button-group">
           <button class="btn" id="runBtn" onclick="startCycling()">Run</button>
-          <button
-            class="btn btn-stop"
-            id="stopBtn"
-            onclick="stopCycling()"
-            style="display: none"
-          >
-            Stop
-          </button>
+                <button class="btn btn-stop" id="stopBtn" onclick="stopCycling()" style="display: none;">Stop</button>
         </div>
 
         <div id="keepAliveReminder" class="reminder">
-          ⚠️ Make sure to leave this page open and keep your device from going
-          to sleep
+                ⚠️ Make sure to leave this page open and keep your device from going to sleep
         </div>
 
-        <div
-          class="progress-container"
-          id="progressContainer"
-          style="display: none"
-        >
+            <div class="progress-container" id="progressContainer" style="display: none;">
           <h2>Progress</h2>
           <div id="progressLog"></div>
         </div>
@@ -439,8 +383,8 @@
     </div>
 
     <script>
-      const API_BASE_URL = "https://api.rach.io/1/public";
-      let apiKey = "";
+        const API_BASE_URL = 'https://api.rach.io/1/public';
+        let apiKey = '';
       let selectedDevice = null;
       let zones = [];
       let zoneMap = {};
@@ -451,37 +395,37 @@
       let selectedZones = [];
 
       // Initialize: Check for saved API key
-      window.onload = function () {
-        const savedKey = localStorage.getItem("rachioApiKey");
+        window.onload = function() {
+            const savedKey = localStorage.getItem('rachioApiKey');
         if (savedKey) {
-          document.getElementById("apiKey").value = savedKey;
+                document.getElementById('apiKey').value = savedKey;
         }
       };
 
       function showError(message) {
-        const errorDiv = document.getElementById("error");
+            const errorDiv = document.getElementById('error');
         errorDiv.textContent = message;
-        errorDiv.style.display = "block";
+            errorDiv.style.display = 'block';
         setTimeout(() => {
-          errorDiv.style.display = "none";
+                errorDiv.style.display = 'none';
         }, 5000);
       }
 
       function showStep(stepNum) {
-        document.querySelectorAll(".step").forEach((step) => {
-          step.classList.remove("active");
+            document.querySelectorAll('.step').forEach(step => {
+                step.classList.remove('active');
         });
-        document.getElementById("step" + stepNum).classList.add("active");
+            document.getElementById('step' + stepNum).classList.add('active');
       }
 
       function showButtonSpinner(buttonId, show) {
         const button = document.getElementById(buttonId);
-        const existingSpinner = button.querySelector(".spinner");
+            const existingSpinner = button.querySelector('.spinner');
 
         if (show && !existingSpinner) {
           button.disabled = true;
-          const spinner = document.createElement("span");
-          spinner.className = "spinner";
+                const spinner = document.createElement('span');
+                spinner.className = 'spinner';
           button.appendChild(spinner);
         } else if (!show && existingSpinner) {
           button.disabled = false;
@@ -494,9 +438,9 @@
         const options = {
           method: method,
           headers: {
-            Authorization: "Bearer " + apiKey,
-            "Content-Type": "application/json",
-          },
+                    'Authorization': 'Bearer ' + apiKey,
+                    'Content-Type': 'application/json'
+                }
         };
 
         if (data) {
@@ -506,14 +450,11 @@
         const response = await fetch(url, options);
 
         if (!response.ok) {
-          throw new Error("API request failed: " + response.statusText);
+                throw new Error('API request failed: ' + response.statusText);
         }
 
         // Handle 204 No Content
-        if (
-          response.status === 204 ||
-          response.headers.get("content-length") === "0"
-        ) {
+            if (response.status === 204 || response.headers.get('content-length') === '0') {
           return null;
         }
 
@@ -521,29 +462,29 @@
       }
 
       async function submitApiKey() {
-        const key = document.getElementById("apiKey").value.trim();
+            const key = document.getElementById('apiKey').value.trim();
         if (!key) {
-          showError("Please enter your API key");
+                showError('Please enter your API key');
           return;
         }
 
         apiKey = key;
-        localStorage.setItem("rachioApiKey", key);
+            localStorage.setItem('rachioApiKey', key);
 
-        showButtonSpinner("submitApiKeyBtn", true);
+            showButtonSpinner('submitApiKeyBtn', true);
 
         try {
           // Get person info
-          const personInfo = await makeRequest("GET", "/person/info");
+                const personInfo = await makeRequest('GET', '/person/info');
           const personId = personInfo.id;
 
           // Get person details to get devices
-          const personDetails = await makeRequest("GET", "/person/" + personId);
+                const personDetails = await makeRequest('GET', '/person/' + personId);
           const devices = personDetails.devices || [];
 
           if (devices.length === 0) {
-            showError("No controllers found for this account");
-            showButtonSpinner("submitApiKeyBtn", false);
+                    showError('No controllers found for this account');
+                    showButtonSpinner('submitApiKeyBtn', false);
             return;
           }
 
@@ -553,51 +494,47 @@
             await loadZones();
           } else {
             // Show controller selection
-            const select = document.getElementById("controllerSelect");
-            select.innerHTML =
-              '<option value="">Choose a controller...</option>';
+                    const select = document.getElementById('controllerSelect');
+                    select.innerHTML = '<option value="">Choose a controller...</option>';
             devices.forEach((device, index) => {
-              const option = document.createElement("option");
+                        const option = document.createElement('option');
               option.value = index;
-              option.textContent = device.name || "Controller " + (index + 1);
+                        option.textContent = device.name || 'Controller ' + (index + 1);
               select.appendChild(option);
             });
 
             // Store devices for later
             window.availableDevices = devices;
-            showButtonSpinner("submitApiKeyBtn", false);
+                    showButtonSpinner('submitApiKeyBtn', false);
             showStep(2);
           }
         } catch (error) {
-          showError("Error: " + error.message);
-          showButtonSpinner("submitApiKeyBtn", false);
+                showError('Error: ' + error.message);
+                showButtonSpinner('submitApiKeyBtn', false);
         }
       }
 
       async function submitController() {
-        const selectIndex = document.getElementById("controllerSelect").value;
-        if (selectIndex === "") {
-          showError("Please select a controller");
+            const selectIndex = document.getElementById('controllerSelect').value;
+            if (selectIndex === '') {
+                showError('Please select a controller');
           return;
         }
 
-        showButtonSpinner("submitControllerBtn", true);
+            showButtonSpinner('submitControllerBtn', true);
         selectedDevice = window.availableDevices[parseInt(selectIndex)];
         await loadZones();
       }
 
       async function loadZones() {
         try {
-          const deviceDetails = await makeRequest(
-            "GET",
-            "/device/" + selectedDevice.id,
-          );
+                const deviceDetails = await makeRequest('GET', '/device/' + selectedDevice.id);
           zones = deviceDetails.zones || [];
 
           if (zones.length === 0) {
-            showError("No zones found on this controller");
-            showButtonSpinner("submitApiKeyBtn", false);
-            showButtonSpinner("submitControllerBtn", false);
+                    showError('No zones found on this controller');
+                    showButtonSpinner('submitApiKeyBtn', false);
+                    showButtonSpinner('submitControllerBtn', false);
             return;
           }
 
@@ -605,45 +542,45 @@
           zones.sort((a, b) => a.zoneNumber - b.zoneNumber);
 
           // Check if all zones are enabled
-          const allEnabled = zones.every((zone) => zone.enabled !== false);
+                const allEnabled = zones.every(zone => zone.enabled !== false);
 
           // Build zone map and display
-          const zoneList = document.getElementById("zoneList");
-          zoneList.innerHTML = "";
+                const zoneList = document.getElementById('zoneList');
+                zoneList.innerHTML = '';
 
-          zones.forEach((zone) => {
+                zones.forEach(zone => {
             const zoneNum = zone.zoneNumber;
-            const zoneName = zone.name || "";
+                    const zoneName = zone.name || '';
             const enabled = zone.enabled !== false;
 
             zoneMap[zoneNum] = {
               id: zone.id,
               name: zoneName,
-              enabled: enabled,
+                        enabled: enabled
             };
 
-            const zoneItem = document.createElement("div");
-            zoneItem.className = "zone-item";
+                    const zoneItem = document.createElement('div');
+                    zoneItem.className = 'zone-item';
 
             // Make entire zone item clickable
-            zoneItem.onclick = function () {
+                    zoneItem.onclick = function() {
               checkbox.checked = !checkbox.checked;
             };
 
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.id = "zone" + zoneNum;
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = 'zone' + zoneNum;
             checkbox.value = zoneNum;
             if (enabled) {
               checkbox.checked = true;
             }
 
-            const label = document.createElement("label");
-            label.htmlFor = "zone" + zoneNum;
+                    const label = document.createElement('label');
+                    label.htmlFor = 'zone' + zoneNum;
 
-            let displayName = "Zone " + zoneNum;
-            if (zoneName && zoneName !== "Zone " + zoneNum) {
-              displayName += " (" + zoneName + ")";
+                    let displayName = 'Zone ' + zoneNum;
+                    if (zoneName && zoneName !== 'Zone ' + zoneNum) {
+                        displayName += ' (' + zoneName + ')';
             }
             label.textContent = displayName;
 
@@ -652,85 +589,74 @@
 
             // Only show status badges if not all zones are enabled
             if (!allEnabled) {
-              const status = document.createElement("span");
-              status.className =
-                "zone-status " + (enabled ? "enabled" : "disabled");
-              status.textContent = enabled ? "Enabled" : "Disabled";
+                        const status = document.createElement('span');
+                        status.className = 'zone-status ' + (enabled ? 'enabled' : 'disabled');
+                        status.textContent = enabled ? 'Enabled' : 'Disabled';
               zoneItem.appendChild(status);
             }
 
             zoneList.appendChild(zoneItem);
           });
 
-          showButtonSpinner("submitApiKeyBtn", false);
-          showButtonSpinner("submitControllerBtn", false);
+                showButtonSpinner('submitApiKeyBtn', false);
+                showButtonSpinner('submitControllerBtn', false);
           showStep(3);
         } catch (error) {
-          showError("Error loading zones: " + error.message);
-          showButtonSpinner("submitApiKeyBtn", false);
-          showButtonSpinner("submitControllerBtn", false);
+                showError('Error loading zones: ' + error.message);
+                showButtonSpinner('submitApiKeyBtn', false);
+                showButtonSpinner('submitControllerBtn', false);
         }
       }
 
       function formatZoneDisplay(zoneNum, zoneInfo) {
-        if (zoneInfo.name && zoneInfo.name !== "Zone " + zoneNum) {
-          return "Zone " + zoneNum + " (" + zoneInfo.name + ")";
+            if (zoneInfo.name && zoneInfo.name !== 'Zone ' + zoneNum) {
+                return 'Zone ' + zoneNum + ' (' + zoneInfo.name + ')';
         }
-        return "Zone " + zoneNum;
+            return 'Zone ' + zoneNum;
       }
 
       function logProgress(message) {
-        const log = document.getElementById("progressLog");
-        const timestamp = new Date()
-          .toLocaleString("en-US", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false,
-          })
-          .replace(",", "");
+            const log = document.getElementById('progressLog');
+            const timestamp = new Date().toLocaleString('en-US', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).replace(',', '');
 
-        log.textContent += "[" + timestamp + "] " + message + "\n";
+            log.textContent += '[' + timestamp + '] ' + message + '\n';
         log.scrollTop = log.scrollHeight;
       }
 
       function sleep(ms) {
-        return new Promise((resolve) => setTimeout(resolve, ms));
+            return new Promise(resolve => setTimeout(resolve, ms));
       }
 
       async function startCycling() {
         // Get selected zones
-        const checkboxes = document.querySelectorAll(
-          '#zoneList input[type="checkbox"]:checked',
-        );
-        selectedZones = Array.from(checkboxes).map((cb) => parseInt(cb.value));
+            const checkboxes = document.querySelectorAll('#zoneList input[type="checkbox"]:checked');
+            selectedZones = Array.from(checkboxes).map(cb => parseInt(cb.value));
 
         if (selectedZones.length === 0) {
-          showError("Please select at least one zone");
+                showError('Please select at least one zone');
           return;
         }
 
         // Get parameters
-        const runDuration = parseInt(
-          document.getElementById("runDuration").value,
-        );
-        const waitDuration = parseInt(
-          document.getElementById("waitDuration").value,
-        );
-        const totalLoops = parseInt(
-          document.getElementById("totalLoops").value,
-        );
+            const runDuration = parseInt(document.getElementById('runDuration').value);
+            const waitDuration = parseInt(document.getElementById('waitDuration').value);
+            const totalLoops = parseInt(document.getElementById("totalLoops").value);
 
         if (runDuration <= 0) {
-          showError("Run duration must be greater than 0");
+                showError('Run duration must be greater than 0');
           return;
         }
 
         if (waitDuration < 0) {
-          showError("Wait duration must be 0 or greater");
+                showError('Wait duration must be 0 or greater');
           return;
         }
 
@@ -741,36 +667,22 @@
 
         // Initialize run counts
         runCounts = {};
-        selectedZones.forEach((z) => (runCounts[z] = 0));
+            selectedZones.forEach(z => runCounts[z] = 0);
 
         // Disable inputs and show stop button
-        document
-          .querySelectorAll("input, select, #runBtn")
-          .forEach((el) => (el.disabled = true));
-        document.getElementById("stopBtn").style.display = "inline-block";
-        document.getElementById("keepAliveReminder").classList.add("show");
-        document.getElementById("progressContainer").style.display = "block";
-        document.getElementById("progressLog").textContent = "";
+            document.querySelectorAll('input, select, #runBtn').forEach(el => el.disabled = true);
+            document.getElementById('stopBtn').style.display = 'inline-block';
+            document.getElementById('keepAliveReminder').classList.add('show');
+            document.getElementById('progressContainer').style.display = 'block';
+            document.getElementById('progressLog').textContent = '';
 
         isRunning = true;
         shouldStop = false;
         isStopping = false;
 
-        logProgress(
-          "Starting continuous cycling through zones: [" +
-            selectedZones.join(", ") +
-            "] for " +
-            totalLoops +
-            " Total Loops",
-        );
-        logProgress(
-          "Run duration: " +
-            runDuration +
-            " seconds, Wait duration: " +
-            waitDuration +
-            " seconds",
-        );
-        logProgress("Press Stop to halt cycling\n");
+            logProgress('Starting continuous cycling through zones: [' + selectedZones.join(', ') + '] for ' + totalLoops + ' Total Loops');
+            logProgress('Run duration: ' + runDuration + ' seconds, Wait duration: ' + waitDuration + ' seconds');
+        logProgress('Press Stop to halt cycling\n');
 
         try {
           while (isRunning && !shouldStop) {
@@ -781,24 +693,16 @@
               runCounts[zoneNum]++;
 
               const zoneDisplay = formatZoneDisplay(zoneNum, zoneInfo);
-              logProgress(
-                "Starting " +
-                  zoneDisplay +
-                  " for " +
-                  runDuration +
-                  " seconds (Run #" +
-                  runCounts[zoneNum] +
-                  ")",
-              );
+                        logProgress('Starting ' + zoneDisplay + ' for ' + runDuration + ' seconds (Run #' + runCounts[zoneNum] + ')');
 
               // Start the zone
               try {
-                await makeRequest("PUT", "/zone/start", {
+                            await makeRequest('PUT', '/zone/start', {
                   id: zoneInfo.id,
-                  duration: runDuration,
+                                duration: runDuration
                 });
               } catch (error) {
-                logProgress("Error starting zone: " + error.message);
+                            logProgress('Error starting zone: ' + error.message);
                 continue;
               }
 
@@ -806,24 +710,20 @@
               await sleep(runDuration * 1000);
 
               //Check to stop looping
-              if (
-                i === selectedZones.length - 1 &&
-                runCounts[zoneNum] === totalLoops
-              ) {
+              if (i === selectedZones.length - 1 && runCounts[zoneNum] === totalLoops) {
                 stopCycling();
               }
 
               // Wait before next zone
               if (waitDuration > 0 && !shouldStop) {
-                logProgress(
-                  "Waiting " + waitDuration + " seconds before next zone...\n",
-                );
+                            logProgress('Waiting ' + waitDuration + ' seconds before next zone...\n');
                 await sleep(waitDuration * 1000);
               }
             }
           }
+
         } catch (error) {
-          logProgress("Error: " + error.message);
+                logProgress('Error: ' + error.message);
         }
       }
 
@@ -834,24 +734,22 @@
         shouldStop = true;
 
         // Show spinner in stop button
-        showButtonSpinner("stopBtn", true);
+            showButtonSpinner('stopBtn', true);
 
         // Try to stop any currently running watering on the device
         try {
-          logProgress("Stopping all watering on device...");
-          await makeRequest("PUT", "/device/stop_water", {
-            id: selectedDevice.id,
+                logProgress('Stopping all watering on device...');
+                await makeRequest('PUT', '/device/stop_water', {
+                    id: selectedDevice.id
           });
-          logProgress("Device watering stopped");
+                logProgress('Device watering stopped');
         } catch (error) {
-          logProgress("Note: Could not stop device watering: " + error.message);
+                logProgress('Note: Could not stop device watering: ' + error.message);
         }
 
         // Print final summary
-        const counts = selectedZones
-          .map((z) => "Zone " + z + ": " + runCounts[z] + "x")
-          .join(", ");
-        logProgress("\nCompleted. Total runs: " + counts);
+            const counts = selectedZones.map(z => 'Zone ' + z + ': ' + runCounts[z] + 'x').join(', ');
+            logProgress('\nCompleted. Total runs: ' + counts);
 
         isRunning = false;
 
@@ -860,12 +758,10 @@
 
       function cleanupAfterStop() {
         // Re-enable inputs
-        document
-          .querySelectorAll("input, select, #runBtn")
-          .forEach((el) => (el.disabled = false));
-        showButtonSpinner("stopBtn", false);
-        document.getElementById("stopBtn").style.display = "none";
-        document.getElementById("keepAliveReminder").classList.remove("show");
+            document.querySelectorAll('input, select, #runBtn').forEach(el => el.disabled = false);
+            showButtonSpinner('stopBtn', false);
+            document.getElementById('stopBtn').style.display = 'none';
+            document.getElementById('keepAliveReminder').classList.remove('show');
         isStopping = false;
       }
     </script>
