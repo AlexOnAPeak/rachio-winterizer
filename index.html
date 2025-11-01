@@ -357,6 +357,11 @@
                     <input type="number" id="waitDuration" value="60" min="0">
                     <div class="help-text">Wait time between zones</div>
                 </div>
+                <div class="form-group">
+                    <label for="totalLoops">Total Loops</label>
+                    <input type="number" id="totalLoops" value="3" min="1">
+                    <div class="help-text">How many total loops of all the selected zones to run</div>
+                </div>
             </div>
 
             <div class="button-group">
@@ -641,6 +646,7 @@
             // Get parameters
             const runDuration = parseInt(document.getElementById('runDuration').value);
             const waitDuration = parseInt(document.getElementById('waitDuration').value);
+            const totalLoops = parseInt(document.getElementById('totalLoops').value);
 
             if (runDuration <= 0) {
                 showError('Run duration must be greater than 0');
@@ -649,6 +655,11 @@
 
             if (waitDuration < 0) {
                 showError('Wait duration must be 0 or greater');
+                return;
+            }
+
+            if (totalLoops < 1) {
+                showError('Total Loops must be 1 or greater');
                 return;
             }
 
@@ -667,7 +678,7 @@
             shouldStop = false;
             isStopping = false;
 
-            logProgress('Starting continuous cycling through zones: [' + selectedZones.join(', ') + ']');
+            logProgress('Starting continuous cycling through zones: [' + selectedZones.join(', ') + '] for ' + totalLoops + ' Total Loops');
             logProgress('Run duration: ' + runDuration + ' seconds, Wait duration: ' + waitDuration + ' seconds');
             logProgress('Press Stop to halt cycling\n');
 
@@ -695,6 +706,11 @@
 
                         // Wait for run duration
                         await sleep(runDuration * 1000);
+			
+                        //Check to stop looping
+                        if(i === selectedZones.length - 1 && runCounts[zoneNum] === totalLoops) {
+                            stopCycling()
+                        }
 
                         // Wait before next zone
                         if (waitDuration > 0 && !shouldStop) {
