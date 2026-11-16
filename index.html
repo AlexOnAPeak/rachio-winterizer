@@ -1,767 +1,866 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rachio Winterizer</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #51A5F8 0%, #6BC079 100%);
-            min-height: 100vh;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .container {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            max-width: 700px;
-            width: 100%;
-            padding: 40px;
-        }
-
-        h1 {
-            color: #51A5F8;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-
-        h2 {
-            color: #333;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            font-size: 20px;
-        }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .step {
-            display: none;
-        }
-
-        .step.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        input[type="number"],
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        input[type="text"]:focus,
-        input[type="password"]:focus,
-        input[type="number"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #51A5F8;
-        }
-
-        .help-text {
-            font-size: 12px;
-            color: #666;
-            margin-top: 5px;
-        }
-
-        .instructions {
-            background: #f8f9fa;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 16px;
-            margin-bottom: 20px;
-        }
-
-        .instructions h3 {
-            color: #333;
-            font-size: 15px;
-            margin-bottom: 12px;
-            font-weight: 600;
-        }
-
-        .instructions ol {
-            margin-left: 20px;
-            color: #555;
-            font-size: 14px;
-            line-height: 1.8;
-        }
-
-        .instructions li {
-            margin-bottom: 6px;
-        }
-
-        .instructions a {
-            color: #51A5F8;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .instructions a:hover {
-            text-decoration: underline;
-        }
-
-        .external-link-icon {
-            display: inline-block;
-            width: 0.85em;
-            height: 0.85em;
-            margin-left: 3px;
-            vertical-align: middle;
-            opacity: 0.7;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #51A5F8 0%, #6BC079 100%);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
-        }
-
-        .btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(81, 165, 248, 0.3);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-stop {
-            background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
-            margin-left: 10px;
-        }
-
-        .btn-stop:hover:not(:disabled) {
-            box-shadow: 0 5px 15px rgba(244, 67, 54, 0.3);
-        }
-
-        .zone-list {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 15px;
-        }
-
-        .zone-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 8px;
-            background: #f5f5f5;
-            border-radius: 4px;
-            cursor: pointer;
-            user-select: none;
-            transition: background-color 0.2s;
-        }
-
-        .zone-item:hover {
-            background: #e8e8e8;
-        }
-
-        .zone-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
-            cursor: pointer;
-            pointer-events: none;
-        }
-
-        .zone-item label {
-            margin: 0;
-            cursor: pointer;
-            flex-grow: 1;
-            pointer-events: none;
-        }
-
-        .zone-status {
-            font-size: 12px;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-weight: 500;
-            pointer-events: none;
-        }
-
-        .zone-status.enabled {
-            background: #6BC079;
-            color: white;
-        }
-
-        .zone-status.disabled {
-            background: #e0e0e0;
-            color: #666;
-        }
-
-        .parameters {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .progress-container {
-            margin-top: 20px;
-        }
-
-        #progressLog {
-            width: 100%;
-            height: 400px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 15px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            overflow-y: auto;
-            background: #f9f9f9;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        .error {
-            background: #ffebee;
-            color: #c62828;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border-left: 4px solid #c62828;
-        }
-
-        .reminder {
-            background: linear-gradient(135deg, #FFA726 0%, #FF7043 100%);
-            color: white;
-            padding: 14px 18px;
-            border-radius: 6px;
-            margin-top: 20px;
-            margin-bottom: 15px;
-            font-weight: 500;
-            font-size: 14px;
-            border-left: 4px solid #F57C00;
-            box-shadow: 0 2px 8px rgba(255, 167, 38, 0.3);
-            display: none;
-        }
-
-        .reminder.show {
-            display: block;
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top: 3px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-6nbLwlf8z4CR3TG66Ctrzls1hh+I9j0n6DbinhEQ2zY='; style-src 'sha256-YQNE736LMspQH5hOR8HoHZTCU8nyMZDEnNsnw1ofYaM='; connect-src https://api.rach.io; img-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Rachio Winterizer</title>
+<style>
+:root {
+  --blue: #2f86e0; --green: #4f9e5c; --red: #c62828; --amber: #b25e00;
+  --text: #222; --muted: #5c5c5c; --border: #d6d6d6; --panel: #f6f7f8; --card: #fff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, sans-serif;
+  background: linear-gradient(135deg, #51A5F8 0%, #6BC079 100%);
+  min-height: 100vh; padding: 20px; color: var(--text);
+  display: flex; justify-content: center; align-items: flex-start;
+}
+.container {
+  background: var(--card); border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,.2);
+  max-width: 720px; width: 100%; padding: 36px; margin-top: 20px;
+}
+h1 { color: var(--blue); margin-bottom: 8px; font-size: 28px; }
+h2 { margin: 28px 0 12px; font-size: 19px; }
+h3 { font-size: 15px; margin-bottom: 10px; }
+p, li { line-height: 1.55; }
+.subtitle { color: var(--muted); margin-bottom: 24px; font-size: 14px; }
+[hidden] { display: none !important; }
+.blocked { font-size: 14px; line-height: 1.55; }
+.demo-cta { display: flex; gap: 16px; align-items: center; margin-top: 26px; padding: 16px; border: 2px dashed #9c6ade; border-radius: 8px; background: #f7f1ff; font-size: 14px; }
+@media (max-width: 600px) { .demo-cta { flex-direction: column; align-items: stretch; } }
+.btn-demo { background: linear-gradient(135deg, #8e44ad 0%, #5b6ee1 100%); white-space: nowrap; }
+.demo-banner { display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 18px; padding: 10px 14px; border-radius: 6px; background: #f3e8ff; border-left: 4px solid #8e44ad; color: #4a2370; font-size: 14px; }
+.hero { margin: -12px -12px 18px; }
+.hero svg { display: block; width: 100%; height: auto; border-radius: 10px; }
+.form-group { margin-bottom: 18px; }
+label.field { display: block; margin-bottom: 6px; font-weight: 600; }
+input[type="text"], input[type="password"], input[type="number"], select {
+  width: 100%; padding: 11px; border: 2px solid var(--border); border-radius: 6px; font-size: 15px;
+}
+input:focus-visible, select:focus-visible, button:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+.help-text { font-size: 12.5px; color: var(--muted); margin-top: 5px; }
+.key-row { display: flex; gap: 8px; }
+.key-row input { flex: 1; font-family: Consolas, monospace; }
+.inline-check { display: flex; align-items: center; gap: 8px; font-size: 14px; margin-top: 10px; cursor: pointer; }
+.inline-check input { width: 18px; height: 18px; }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-bottom: 18px; font-size: 14px; }
+.panel ol, .panel ul { margin-left: 20px; }
+.panel a { color: var(--blue); font-weight: 600; }
+.warn-panel { background: #fff4e5; border-color: #f0b46a; }
+.btn {
+  background: linear-gradient(135deg, #2f86e0 0%, #4f9e5c 100%); color: #fff; border: none;
+  padding: 11px 26px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-secondary { background: #e9ecef; color: var(--text); }
+.btn-stop { background: linear-gradient(135deg, #e53935 0%, #c2185b 100%); font-size: 17px; padding: 12px 34px; }
+.btn-small { padding: 6px 12px; font-size: 13px; }
+.button-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; align-items: center; }
+.zone-tools { display: flex; gap: 8px; margin-bottom: 8px; }
+.zone-list { max-height: 320px; overflow-y: auto; border: 2px solid var(--border); border-radius: 6px; padding: 10px; }
+.zone-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px; margin-bottom: 6px;
+  background: #f3f3f3; border-radius: 4px; cursor: pointer; user-select: none;
+}
+.zone-item:hover { background: #e7e7e7; }
+.zone-item input { width: 20px; height: 20px; cursor: pointer; }
+.zone-item span.name { flex: 1; }
+.zone-status { font-size: 12px; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+.zone-status.enabled { background: var(--green); color: #fff; }
+.zone-status.disabled { background: #ddd; color: #555; }
+.parameters { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.parameters .full { grid-column: 1 / -1; }
+span.field { display: block; margin-bottom: 6px; font-weight: 600; }
+.pkg-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+@media (max-width: 600px) { .pkg-grid { grid-template-columns: repeat(2, 1fr); } }
+.pkg { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 8px; font-size: 13px; }
+.pkg label { display: block; font-weight: 600; margin-bottom: 4px; }
+.pkg input { padding: 7px; margin-bottom: 4px; }
+.pkg b { font-variant-numeric: tabular-nums; }
+.progress-line { display: block; font-weight: 400; font-size: 13.5px; margin-top: 6px; color: var(--muted); }
+@media (max-width: 600px) { .parameters { grid-template-columns: 1fr; } .container { padding: 22px; } }
+.estimate { font-size: 14px; color: var(--muted); margin-top: 4px; }
+.estimate.bad { color: var(--red); font-weight: 600; }
+.checklist label { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 8px; cursor: pointer; }
+.checklist input { width: 18px; height: 18px; margin-top: 2px; flex-shrink: 0; }
+.status-bar { margin-top: 18px; padding: 14px; border-radius: 6px; background: #e8f2fd; border-left: 4px solid var(--blue); font-weight: 600; }
+.status-bar .countdown { font-variant-numeric: tabular-nums; }
+#progressLog {
+  width: 100%; height: 340px; border: 2px solid var(--border); border-radius: 6px; padding: 12px;
+  font-family: Consolas, "Courier New", monospace; font-size: 13px; overflow-y: auto;
+  background: #fafafa; white-space: pre-wrap; word-wrap: break-word;
+}
+.error { background: #ffebee; color: var(--red); padding: 12px; border-radius: 6px; margin-bottom: 18px; border-left: 4px solid var(--red); }
+.reminder { background: #fff4e5; color: var(--amber); padding: 12px 16px; border-radius: 6px; margin-top: 16px; font-weight: 600; font-size: 14px; border-left: 4px solid #f57c00; }
+.spinner { display: inline-block; width: 15px; height: 15px; border: 3px solid rgba(255,255,255,.35); border-top-color: #fff; border-radius: 50%; animation: spin 1s linear infinite; margin-left: 10px; vertical-align: middle; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 3s; } }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>Rachio Winterizer</h1>
-        <p class="subtitle">Winterize your irrigation system by attaching an air compressor and using this tool, in tandem with your Rachio controller, to continuously cycle through your zones to blow them out with air. A wait time between each run allows pressure to build back up in your compressor and sprinkler lines; choose a long enough time to allow your compressor to periodically fully recharge.<br><br>This tool runs entirely in your browser and does not send data to any server other than Rachio's API.</p>
+<main class="container">
+  <div id="scriptBlocked" class="error blocked" role="alert">
+    <strong>⚠️ This page's script isn't running, so the buttons won't do anything.</strong><br>
+    You probably opened it in a preview pane (this app, Outlook, File Explorer) or in OneDrive/SharePoint in a web browser. Those show the page but block its code.
+    <strong>Fix:</strong> save this .html file to your computer, then right-click it → <em>Open with</em> → <em>Microsoft Edge</em> or <em>Google Chrome</em>.
+  </div>
 
-        <div id="error" class="error" style="display: none;"></div>
+  <div class="hero" id="hero">
+    <svg viewBox="0 0 640 280" role="img" aria-labelledby="heroTitle" xmlns="http://www.w3.org/2000/svg">
+      <title id="heroTitle">Cartoon: a guy in a camp chair on the driveway with a cold light beer, while the air compressor blows out the sprinklers</title>
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe3ff"/><stop offset="1" stop-color="#eef8ff"/></linearGradient>
+        <linearGradient id="can" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9ea7b0"/><stop offset=".45" stop-color="#f4f6f8"/><stop offset="1" stop-color="#8d969f"/></linearGradient>
+      </defs>
+      <!-- sky, sun, clouds -->
+      <rect width="640" height="180" fill="url(#sky)"/>
+      <circle cx="585" cy="45" r="24" fill="#ffd54f"/>
+      <g fill="#ffffff" opacity=".9"><ellipse cx="420" cy="40" rx="34" ry="12"/><ellipse cx="445" cy="32" rx="22" ry="12"/><ellipse cx="270" cy="58" rx="26" ry="9"/></g>
+      <!-- leafless tree: it's winter prep -->
+      <g stroke="#6d4c41" stroke-linecap="round" fill="none"><path d="M610 180 L610 105" stroke-width="7"/><path d="M610 135 L585 110 M610 125 L632 102 M597 122 L590 98" stroke-width="3"/></g>
+      <!-- house + garage -->
+      <rect x="20" y="62" width="205" height="122" fill="#e9dcc6"/>
+      <polygon points="8,64 122,14 237,64" fill="#8d6e63"/>
+      <rect x="44" y="96" width="156" height="88" fill="#fafafa" stroke="#c9c9c9"/>
+      <g stroke="#d6d6d6" stroke-width="2"><line x1="44" y1="118" x2="200" y2="118"/><line x1="44" y1="140" x2="200" y2="140"/><line x1="44" y1="162" x2="200" y2="162"/></g>
+      <!-- lawn + driveway -->
+      <rect y="178" width="640" height="102" fill="#7cc36b"/>
+      <polygon points="40,184 204,184 470,280 0,280" fill="#b9b9b9"/>
+      <g stroke="#a3a3a3" stroke-width="2"><line x1="20" y1="230" x2="320" y2="230"/><line x1="122" y1="184" x2="235" y2="280"/></g>
+      <!-- air compressor -->
+      <g>
+        <rect x="128" y="222" width="70" height="34" rx="16" fill="#d32f2f"/>
+        <rect x="150" y="210" width="26" height="14" rx="3" fill="#424242"/>
+        <circle cx="168" cy="217" r="4" fill="#e0e0e0"/>
+        <path d="M136 222 L130 204 L148 204" stroke="#424242" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <circle cx="140" cy="258" r="7" fill="#333"/><circle cx="186" cy="258" r="7" fill="#333"/>
+      </g>
+      <!-- air hose to the sprinkler -->
+      <path d="M198 242 C 290 292, 470 290, 552 250" stroke="#263238" stroke-width="3" fill="none"/>
+      <!-- sprinkler head misting out -->
+      <rect x="550" y="242" width="12" height="12" rx="2" fill="#37474f"/>
+      <g fill="#90caf9" opacity=".85"><circle cx="545" cy="229" r="3"/><circle cx="556" cy="223" r="3.5"/><circle cx="568" cy="226" r="3"/><circle cx="576" cy="234" r="2.5"/><circle cx="549" cy="214" r="2.5"/><circle cx="560" cy="208" r="3"/><circle cx="572" cy="213" r="2.5"/><circle cx="538" cy="219" r="2"/></g>
+      <text x="580" y="205" font-family="Segoe UI, sans-serif" font-size="12" font-style="italic" fill="#1565c0">pssshh</text>
+      <!-- cooler -->
+      <g>
+        <rect x="226" y="232" width="56" height="32" rx="4" fill="#1f4fa0"/>
+        <rect x="223" y="226" width="62" height="9" rx="3" fill="#e3e7eb"/>
+        <text x="254" y="252" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="8.5" font-weight="700" fill="#ffffff">COLD ONES</text>
+      </g>
+      <!-- camp chair -->
+      <g>
+        <line x1="296" y1="234" x2="352" y2="268" stroke="#555" stroke-width="3"/>
+        <line x1="352" y1="234" x2="296" y2="268" stroke="#555" stroke-width="3"/>
+        <rect x="290" y="166" width="13" height="66" rx="4" fill="#1565c0"/>
+        <rect x="290" y="224" width="66" height="11" rx="4" fill="#1565c0"/>
+      </g>
+      <!-- the guy -->
+      <g>
+        <rect x="300" y="168" width="36" height="58" rx="13" fill="#455a64"/>
+        <rect x="320" y="212" width="50" height="17" rx="8" fill="#37474f"/>
+        <rect x="356" y="214" width="15" height="46" rx="7" fill="#37474f"/>
+        <rect x="353" y="254" width="28" height="11" rx="5" fill="#3e2723"/>
+        <circle cx="320" cy="148" r="19" fill="#f1c27d"/>
+        <path d="M301 146 Q320 118 339 145 Z" fill="#1e3a5f"/>
+        <rect x="333" y="140" width="18" height="6" rx="3" fill="#1e3a5f"/>
+        <rect x="324" y="147" width="14" height="6" rx="2" fill="#212121"/>
+        <path d="M327 160 Q332 165 337 158" stroke="#7a4a2a" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M322 182 L343 206 L354 186" stroke="#455a64" stroke-width="11" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="356" cy="183" r="6.5" fill="#f1c27d"/>
+        <!-- the driveway beer -->
+        <rect x="349" y="157" width="19" height="30" rx="4" fill="url(#can)" stroke="#7d868f" stroke-width=".8"/>
+        <polygon points="350,176 355,169 359,174 363,167 367,176" fill="#1f4fa0"/>
+        <text x="358.5" y="166" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="4.6" font-weight="700" fill="#1f4fa0">COLD</text>
+        <text x="358.5" y="183" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="4.2" font-weight="700" fill="#1f4fa0">BEER</text>
+      </g>
+      <!-- speech bubble -->
+      <g>
+        <rect x="372" y="88" width="178" height="40" rx="12" fill="#ffffff" stroke="#c7d3de"/>
+        <polygon points="384,127 372,146 398,127" fill="#ffffff" stroke="#c7d3de"/>
+        <line x1="385" y1="127" x2="397" y2="127" stroke="#ffffff" stroke-width="2"/>
+        <text x="461" y="113" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="14" font-weight="600" fill="#263238">Rachio's got this. 🍺</text>
+      </g>
+    </svg>
+  </div>
 
-        <!-- Step 1: API Key -->
-        <div id="step1" class="step active">
-            <div class="instructions">
-                <h3>Getting your Rachio API key</h3>
-                <ol>
-                    <li>Log in at <a href="https://app.rach.io/" target="_blank" rel="noopener noreferrer">https://app.rach.io/<svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6m-7 1l9-9m-5 0h5v5"></path></svg></a> or open your Rachio app</li>
-                    <li>Click your profile icon (Settings)</li>
-                    <li>Click Get API Key / copy your key</li>
-                </ol>
-            </div>
-            <div class="form-group">
-                <label for="apiKey">Rachio API key</label>
-                <input type="text" id="apiKey" placeholder="Enter your API key">
-                <div class="help-text">Your API key will be stored locally in your browser</div>
-            </div>
-            <button class="btn" id="submitApiKeyBtn" onclick="submitApiKey()">Submit</button>
+  <h1>Rachio Winterizer</h1>
+  <p class="subtitle">Blow out your sprinkler lines with an air compressor while your Rachio controller cycles through the zones. A wait between zones gives the compressor time to build pressure back up.<br><br>
+  This page runs entirely in your browser. It talks only to <code>api.rach.io</code>, and a Content Security Policy blocks it from contacting any other server.</p>
+
+  <div id="error" class="error" role="alert" hidden></div>
+
+  <div id="demoBanner" class="demo-banner" role="status" hidden>
+    <span>🧪 <strong>Demo mode.</strong> Fake controllers, nothing is sent to Rachio, and time runs 60× faster.</span>
+    <button type="button" class="btn btn-secondary btn-small" id="demoExitBtn">Exit demo</button>
+  </div>
+
+  <!-- Step 1: API key -->
+  <section id="step1" class="step">
+    <div class="panel">
+      <h3>Getting your Rachio API key</h3>
+      <ol>
+        <li>Log in at <a href="https://app.rach.io/" target="_blank" rel="noopener noreferrer">app.rach.io</a></li>
+        <li>Open your profile / account settings</li>
+        <li>Click <strong>Get API Key</strong> and copy it</li>
+      </ol>
+      <p class="help-text">This key gives full control of your Rachio account. Only paste it into a copy of this page that you saved yourself and have read.</p>
+    </div>
+    <div class="form-group">
+      <label class="field" for="apiKey">Rachio API key</label>
+      <div class="key-row">
+        <input type="password" id="apiKey" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+               autocomplete="off" autocapitalize="off" spellcheck="false">
+        <button type="button" class="btn btn-secondary btn-small" id="toggleKeyBtn" aria-pressed="false">Show</button>
+      </div>
+      <label class="inline-check"><input type="checkbox" id="rememberKey"> Remember the key on this device (saved unencrypted in browser storage)</label>
+      <div class="help-text" id="savedKeyNote" hidden>A saved key was loaded from this browser.
+        <button type="button" class="btn btn-secondary btn-small" id="forgetKeyBtn">Forget saved key</button></div>
+    </div>
+    <button type="button" class="btn" id="submitApiKeyBtn">Connect</button>
+
+    <div class="demo-cta">
+      <div>
+        <strong>Just looking?</strong> Try it with a pretend Rachio account. No API key needed, nothing is sent to Rachio, and time runs 60× faster.
+      </div>
+      <button type="button" class="btn btn-demo" id="demoBtn">🧪 Test this out</button>
+    </div>
+  </section>
+
+  <!-- Step 2: Controller selection -->
+  <section id="step2" class="step" hidden>
+    <div class="form-group">
+      <label class="field" for="controllerSelect">Select controller</label>
+      <select id="controllerSelect"></select>
+    </div>
+    <div class="button-group">
+      <button type="button" class="btn" id="submitControllerBtn">Continue</button>
+      <button type="button" class="btn btn-secondary" data-back="1">Back</button>
+    </div>
+  </section>
+
+  <!-- Step 3: Zones, parameters, run -->
+  <section id="step3" class="step" hidden>
+    <p class="help-text" id="controllerLabel"></p>
+    <h2>Select zones to blow out</h2>
+    <div class="zone-tools">
+      <button type="button" class="btn btn-secondary btn-small" id="selectAllBtn">Select all</button>
+      <button type="button" class="btn btn-secondary btn-small" id="selectNoneBtn">Select none</button>
+    </div>
+    <div class="zone-list" id="zoneList"></div>
+
+    <h2>Parameters</h2>
+    <div class="parameters">
+      <div class="form-group">
+        <label class="field" for="runDuration">Zone on time (sec)</label>
+        <input type="number" id="runDuration" value="60" min="5" max="180" step="1" inputmode="numeric">
+        <div class="help-text">5 to 180. How long a zone valve stays open per burst. Running dry heats the fittings.</div>
+      </div>
+      <div class="form-group">
+        <label class="field" for="waitDuration">Compressor rest (sec)</label>
+        <input type="number" id="waitDuration" value="180" min="0" max="1800" step="1" inputmode="numeric">
+        <div class="help-text">0 to 1800. All valves closed while the tank refills, after every burst.</div>
+      </div>
+      <div class="form-group">
+        <label class="field" for="burstsPerZone">Bursts per zone</label>
+        <input type="number" id="burstsPerZone" value="1" min="1" max="10" step="1" inputmode="numeric">
+        <div class="help-text">1 to 10. On/rest bursts a zone gets before moving to the next zone.</div>
+      </div>
+      <div class="form-group">
+        <label class="field" for="totalCycles">Whole-system passes</label>
+        <select id="totalCycles">
+          <option value="1">1 pass</option>
+          <option value="2">2 passes</option>
+          <option value="3">3 passes</option>
+          <option value="4" selected>4 passes</option>
+        </select>
+        <div class="help-text">Times to run through every selected zone.</div>
+      </div>
+      <div class="form-group full">
+        <span class="field" id="pkgHeading">On time per pass (% of zone on time)</span>
+        <div class="pkg-grid" role="group" aria-labelledby="pkgHeading">
+          <div class="pkg" id="pkgRow1"><label for="pkgPct1">Pass 1</label><input type="number" id="pkgPct1" value="100" min="10" max="100" step="1" inputmode="numeric"><span>% = <b id="pkgSec1"></b></span></div>
+          <div class="pkg" id="pkgRow2"><label for="pkgPct2">Pass 2</label><input type="number" id="pkgPct2" value="75" min="10" max="100" step="1" inputmode="numeric"><span>% = <b id="pkgSec2"></b></span></div>
+          <div class="pkg" id="pkgRow3"><label for="pkgPct3">Pass 3</label><input type="number" id="pkgPct3" value="50" min="10" max="100" step="1" inputmode="numeric"><span>% = <b id="pkgSec3"></b></span></div>
+          <div class="pkg" id="pkgRow4"><label for="pkgPct4">Pass 4</label><input type="number" id="pkgPct4" value="25" min="10" max="100" step="1" inputmode="numeric"><span>% = <b id="pkgSec4"></b></span></div>
         </div>
+        <div class="help-text">10 to 100 each. Set them all to 100 for no taper. On time never goes below 5 s.</div>
+      </div>
+    </div>
+    <p class="help-text">Order: Zone 1 (on → rest) × bursts → Zone 2 … → last zone, then start the next pass. The final rest is skipped.</p>
+    <p class="estimate" id="estimate"></p>
 
-        <!-- Step 2: Controller Selection (if multiple) -->
-        <div id="step2" class="step">
-            <div class="form-group">
-                <label for="controllerSelect">Select controller</label>
-                <select id="controllerSelect">
-                    <option value="">Choose a controller...</option>
-                </select>
-            </div>
-            <button class="btn" id="submitControllerBtn" onclick="submitController()">Continue</button>
-        </div>
-
-        <!-- Step 3: Zone Selection and Parameters -->
-        <div id="step3" class="step">
-            <h2>Select zones to cycle</h2>
-            <div class="zone-list" id="zoneList"></div>
-
-            <h2>Parameters</h2>
-            <div class="parameters">
-                <div class="form-group">
-                    <label for="runDuration">Run duration (seconds)</label>
-                    <input type="number" id="runDuration" value="10" min="1">
-                    <div class="help-text">How long each zone runs</div>
-                </div>
-                <div class="form-group">
-                    <label for="waitDuration">Wait duration (seconds)</label>
-                    <input type="number" id="waitDuration" value="60" min="0">
-                    <div class="help-text">Wait time between zones</div>
-                </div>
-                <div class="form-group">
-                    <label for="totalCycles">Total cycles</label>
-                    <input type="number" id="totalCycles" value="3" min="1">
-                    <div class="help-text">Number of times each zone will run</div>
-                </div>
-            </div>
-
-            <div class="button-group">
-                <button class="btn" id="runBtn" onclick="startCycling()">Run</button>
-                <button class="btn btn-stop" id="stopBtn" onclick="stopCycling()" style="display: none;">Stop</button>
-            </div>
-
-            <div id="keepAliveReminder" class="reminder">
-                ⚠️ Make sure to leave this page open and keep your device from going to sleep
-            </div>
-
-            <div class="progress-container" id="progressContainer" style="display: none;">
-                <h2>Progress</h2>
-                <div id="progressLog"></div>
-            </div>
-        </div>
+    <h2>Pre-flight checklist</h2>
+    <div class="panel warn-panel checklist" id="checklist">
+      <label><input type="checkbox"> The water supply to the irrigation system is shut off and the line pressure has been bled down.</label>
+      <label><input type="checkbox"> The compressor regulator is set to about 50 PSI or less for PVC, or about 80 PSI or less for poly pipe. I'm not going above what my system is rated for.</label>
+      <label><input type="checkbox"> The air goes in downstream of the backflow preventer, and the backflow isolation valves are closed. Air never goes through the backflow device.</label>
+      <label><input type="checkbox"> Eye protection is on, nobody is standing over sprinkler heads, and I'll stay within earshot of the compressor and check on it periodically.</label>
+      <label><input type="checkbox"> 🍺 Driveway beer is securely on my person and ready to drink.</label>
     </div>
 
-    <script>
-        const API_BASE_URL = 'https://api.rach.io/1/public';
-        let apiKey = '';
-        let selectedDevice = null;
-        let zones = [];
-        let zoneMap = {};
-        let runCounts = {};
-        let isRunning = false;
-        let shouldStop = false;
-        let isStopping = false;
-        let selectedZones = [];
+    <div class="button-group">
+      <button type="button" class="btn" id="runBtn" disabled>Run</button>
+      <button type="button" class="btn btn-stop" id="stopBtn" hidden>STOP</button>
+      <button type="button" class="btn btn-secondary" id="changeBtn" data-back="1">Change controller / key</button>
+    </div>
 
-        // Initialize: Check for saved API key
-        window.onload = function() {
-            const savedKey = localStorage.getItem('rachioApiKey');
-            if (savedKey) {
-                document.getElementById('apiKey').value = savedKey;
-            }
-        };
+    <div class="status-bar" id="statusBar" role="status" aria-live="polite" hidden>
+      <span id="statusText"></span> <span class="countdown" id="countdown"></span>
+      <span class="progress-line" id="progressText"></span>
+    </div>
+    <div id="keepAliveReminder" class="reminder" hidden></div>
 
-        function showError(message) {
-            const errorDiv = document.getElementById('error');
-            errorDiv.textContent = message;
-            errorDiv.style.display = 'block';
-            setTimeout(() => {
-                errorDiv.style.display = 'none';
-            }, 5000);
+    <div id="progressContainer" hidden>
+      <h2>Log</h2>
+      <div id="progressLog" role="log" aria-live="off" tabindex="0"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  const API_BASE_URL = 'https://api.rach.io/1/public';
+  const STORAGE_KEY = 'rachioApiKey';
+  const REQUEST_TIMEOUT_MS = 15000;
+  const MAX_CONSECUTIVE_ERRORS = 3;
+  const DAILY_API_LIMIT = 1700; // Rachio's published per-key daily limit
+  const LIMITS = { run: [5, 180], wait: [0, 1800], bursts: [1, 10], cycles: [1, 4] };
+  const BASE_TITLE = document.title;
+
+  const $ = (id) => document.getElementById(id);
+
+  let apiKey = '';
+  let devices = [];
+  let selectedDevice = null;
+  let zones = [];
+  let currentRun = null;   // { cancelled, wake, controller } for the run in progress
+  let wakeLock = null;
+  let errorTimer = null;
+
+  // ---------- demo mode: fake account, no network, sped-up clock ----------
+  const DEMO_SPEED = 60;
+  let demoMode = false;
+  const timeScale = () => (demoMode ? DEMO_SPEED : 1);
+  const demoZones = (prefix, names, disabled) => names.map((n, i) => ({
+    id: prefix + '-z' + (i + 1), zoneNumber: i + 1, name: n, enabled: !disabled.includes(i + 1)
+  }));
+  const DEMO_DEVICES = [
+    { id: 'demo-front', name: 'Front Yard (demo)', zones: demoZones('demo-front',
+      ['Front lawn north', 'Front lawn south', 'Parkway', 'Side yard east', 'Mailbox beds', 'Foundation drip', 'Tree bubblers', 'Zone 8'], [8]) },
+    { id: 'demo-back', name: 'Back Yard (demo)', zones: demoZones('demo-back',
+      ['Back lawn west', 'Back lawn east', 'Garden drip', 'Patio pots', 'Side yard west', 'Dog run', 'Fence line'], []) }
+  ];
+  async function demoApi(method, endpoint) {
+    await new Promise((r) => setTimeout(r, 250));      // feel like a network call
+    if (endpoint === '/person/info') return { id: 'demo-person' };
+    if (endpoint === '/person/demo-person') return { devices: DEMO_DEVICES.map(({ id, name }) => ({ id, name })) };
+    const dev = DEMO_DEVICES.find((d) => endpoint === '/device/' + d.id);
+    if (dev) return dev;
+    if (method === 'PUT' && (endpoint === '/zone/start' || endpoint === '/device/stop_water')) return null;
+    throw new ApiError('Not found (demo)', 404);
+  }
+
+  // ---------- storage (wrapped: may throw in private mode) ----------
+  const store = {
+    get() { try { return localStorage.getItem(STORAGE_KEY); } catch { return null; } },
+    set(v) { try { localStorage.setItem(STORAGE_KEY, v); } catch {} },
+    clear() { try { localStorage.removeItem(STORAGE_KEY); } catch {} }
+  };
+
+  // ---------- UI helpers ----------
+  function showError(message) {
+    const el = $('error');
+    el.textContent = message;
+    el.hidden = false;
+    clearTimeout(errorTimer);
+    errorTimer = setTimeout(() => { el.hidden = true; }, 8000);
+  }
+  function clearError() { $('error').hidden = true; }
+
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach((s) => { s.hidden = s.id !== 'step' + n; });
+    $('hero').hidden = n !== 1;   // cartoon only on the start screen
+    clearError();
+  }
+
+  function setBusy(buttonId, busy) {
+    const b = $(buttonId);
+    const sp = b.querySelector('.spinner');
+    b.disabled = busy;
+    if (busy && !sp) { const s = document.createElement('span'); s.className = 'spinner'; b.appendChild(s); }
+    if (!busy && sp) sp.remove();
+  }
+
+  function zoneLabel(z) {
+    const base = 'Zone ' + z.zoneNumber;
+    return z.name && z.name !== base ? base + ' (' + z.name + ')' : base;
+  }
+
+  function fmtDuration(sec) {
+    sec = Math.max(0, Math.round(sec));
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+    return (h ? h + 'h ' : '') + (h || m ? m + 'm ' : '') + s + 's';
+  }
+
+  function log(message) {
+    const el = $('progressLog');
+    const ts = new Date().toLocaleTimeString([], { hour12: false });
+    el.textContent += '[' + ts + '] ' + message + '\n';
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function setStatus(text) { $('statusText').textContent = text; }
+
+  // ---------- API ----------
+  class ApiError extends Error {
+    constructor(message, status) { super(message); this.status = status; }
+  }
+
+  async function api(method, endpoint, body, run) {
+    if (demoMode) return demoApi(method, endpoint);   // demo never touches the network
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    if (run) run.controller = controller;
+    let response;
+    try {
+      response = await fetch(API_BASE_URL + endpoint, {
+        method,
+        headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined,
+        signal: controller.signal,
+        credentials: 'omit',
+        referrerPolicy: 'no-referrer',
+        cache: 'no-store'
+      });
+    } catch (e) {
+      if (e.name === 'AbortError') throw new ApiError(run && run.cancelled ? 'Cancelled' : 'Request timed out', 0);
+      throw new ApiError('Network error. Check your internet connection.', 0);
+    } finally {
+      clearTimeout(timer);
+      if (run && run.controller === controller) run.controller = null;
+    }
+
+    if (!response.ok) {
+      const reasons = {
+        401: 'API key was rejected (401). Check the key.',
+        403: 'Access denied (403).',
+        404: 'Not found (404).',
+        429: 'Rachio rate limit hit (429). Wait a while and try again.'
+      };
+      throw new ApiError(reasons[response.status] || ('HTTP ' + response.status + (response.statusText ? ' ' + response.statusText : '')), response.status);
+    }
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+  }
+
+  // ---------- Step 1: key ----------
+  function initKeyStep() {
+    const saved = store.get();
+    if (saved) {
+      $('apiKey').value = saved;
+      $('rememberKey').checked = true;
+      $('savedKeyNote').hidden = false;
+    }
+    $('toggleKeyBtn').addEventListener('click', () => {
+      const input = $('apiKey');
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      $('toggleKeyBtn').textContent = show ? 'Hide' : 'Show';
+      $('toggleKeyBtn').setAttribute('aria-pressed', String(show));
+    });
+    $('forgetKeyBtn').addEventListener('click', () => {
+      store.clear();
+      $('apiKey').value = '';
+      $('rememberKey').checked = false;
+      $('savedKeyNote').hidden = true;
+    });
+    $('apiKey').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitApiKey(); });
+    $('submitApiKeyBtn').addEventListener('click', submitApiKey);
+    $('demoBtn').addEventListener('click', startDemo);
+    $('demoExitBtn').addEventListener('click', () => { if (!currentRun) { endDemo(); showStep(1); } });
+  }
+
+  async function submitApiKey() {
+    const key = $('apiKey').value.trim();
+    if (!key) { showError('Please enter your API key.'); return; }
+    if (!/^[A-Za-z0-9-]{20,64}$/.test(key)) {
+      showError('That doesn\'t look like a Rachio API key. It should only contain letters, numbers and dashes.');
+      return;
+    }
+    endDemo();
+    apiKey = key;
+    if ($('rememberKey').checked) store.set(key); else store.clear();
+    await connectAccount('submitApiKeyBtn');
+  }
+
+  function startDemo() {
+    demoMode = true;
+    apiKey = '';
+    $('demoBanner').hidden = false;
+    connectAccount('demoBtn');
+  }
+
+  function endDemo() {
+    demoMode = false;
+    $('demoBanner').hidden = true;
+  }
+
+  async function connectAccount(buttonId) {
+    setBusy(buttonId, true);
+    try {
+      const info = await api('GET', '/person/info');
+      const person = await api('GET', '/person/' + encodeURIComponent(info.id));
+      devices = (person.devices || []).filter((d) => d && d.id);
+      if (devices.length === 0) { showError('No controllers found on this account.'); return; }
+      if (devices.length === 1) { selectedDevice = devices[0]; await loadZones(); return; }
+
+      const select = $('controllerSelect');
+      select.replaceChildren(new Option('Choose a controller...', ''));
+      devices.forEach((d, i) => select.add(new Option(d.name || 'Controller ' + (i + 1), String(i))));
+      showStep(2);
+    } catch (e) {
+      if (e.status === 401 && !demoMode) { store.clear(); $('savedKeyNote').hidden = true; }
+      showError('Could not connect: ' + e.message);
+    } finally {
+      setBusy(buttonId, false);
+    }
+  }
+
+  // ---------- Step 2: controller ----------
+  async function submitController() {
+    const idx = $('controllerSelect').value;
+    if (idx === '' || !devices[Number(idx)]) { showError('Please select a controller.'); return; }
+    selectedDevice = devices[Number(idx)];
+    setBusy('submitControllerBtn', true);
+    try { await loadZones(); } finally { setBusy('submitControllerBtn', false); }
+  }
+
+  // ---------- Step 3: zones ----------
+  async function loadZones() {
+    try {
+      const details = await api('GET', '/device/' + encodeURIComponent(selectedDevice.id));
+      zones = (details.zones || []).filter((z) => z && z.id).sort((a, b) => a.zoneNumber - b.zoneNumber);
+      if (zones.length === 0) { showError('No zones found on this controller.'); return; }
+
+      const allEnabled = zones.every((z) => z.enabled !== false);
+      const list = $('zoneList');
+      list.replaceChildren();
+      zones.forEach((z) => {
+        const enabled = z.enabled !== false;
+        const row = document.createElement('label');           // native label = click/keyboard just work
+        row.className = 'zone-item';
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.value = z.id;
+        cb.checked = enabled;
+        cb.addEventListener('change', updateEstimate);
+        const name = document.createElement('span');
+        name.className = 'name';
+        name.textContent = zoneLabel(z);
+        row.append(cb, name);
+        if (!allEnabled) {
+          const badge = document.createElement('span');
+          badge.className = 'zone-status ' + (enabled ? 'enabled' : 'disabled');
+          badge.textContent = enabled ? 'Enabled' : 'Disabled';
+          row.append(badge);
         }
+        list.append(row);
+      });
 
-        function showStep(stepNum) {
-            document.querySelectorAll('.step').forEach(step => {
-                step.classList.remove('active');
-            });
-            document.getElementById('step' + stepNum).classList.add('active');
+      $('controllerLabel').textContent = 'Controller: ' + (details.name || selectedDevice.name || 'Rachio');
+      showStep(3);
+      updateEstimate();
+    } catch (e) {
+      showError('Error loading zones: ' + e.message);
+    }
+  }
+
+  function selectedZones() {
+    const ids = new Set(Array.from($('zoneList').querySelectorAll('input:checked')).map((c) => c.value));
+    return zones.filter((z) => ids.has(z.id));
+  }
+
+  function readParams() {
+    const read = (id, [lo, hi], name) => {
+      const raw = $(id).value.trim();
+      const n = Number(raw);
+      if (raw === '' || !Number.isInteger(n) || n < lo || n > hi) {
+        throw new Error(name + ' must be a whole number from ' + lo + ' to ' + hi + '.');
+      }
+      return n;
+    };
+    return {
+      run: read('runDuration', LIMITS.run, 'Zone on time'),
+      wait: read('waitDuration', LIMITS.wait, 'Compressor rest'),
+      bursts: read('burstsPerZone', LIMITS.bursts, 'Bursts per zone'),
+      cycles: read('totalCycles', LIMITS.cycles, 'Whole-system passes'),
+      taper: Array.from({ length: Number($('totalCycles').value) || 1 }, (_, i) =>
+        read('pkgPct' + (i + 1), [10, 100], 'Pass ' + (i + 1) + ' %'))
+    };
+  }
+
+  // Show only the % boxes for the chosen number of packages.
+  function syncPackageRows() {
+    const n = Number($('totalCycles').value) || 1;
+    for (let i = 1; i <= LIMITS.cycles[1]; i++) $('pkgRow' + i).hidden = i > n;
+  }
+
+  // Per-pass on time (sec) and the flat list of every zone start's on time.
+  function buildPlan(p, nZones) {
+    const perPass = Array.from({ length: p.cycles }, (_, c) =>
+      Math.max(LIMITS.run[0], Math.round(p.run * p.taper[Math.min(c, p.taper.length - 1)] / 100)));
+    const runs = [];
+    perPass.forEach((sec) => { for (let i = 0; i < nZones * p.bursts; i++) runs.push(sec); });
+    return { perPass, runs };
+  }
+
+  // Seconds from start #idx (0-based) to the end; no rest after the final start.
+  function secondsFrom(runs, idx, wait) {
+    let s = 0;
+    for (let i = idx; i < runs.length; i++) s += runs[i];
+    return s + Math.max(0, runs.length - idx - 1) * wait;
+  }
+  const clockAt = (secFromNow) => new Date(Date.now() + secFromNow * 1000 / timeScale()).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+
+  function updateEstimate() {
+    const el = $('estimate');
+    const zs = selectedZones();
+    syncPackageRows();
+    let p;
+    try { p = readParams(); } catch (e) {
+      el.textContent = e.message; el.className = 'estimate bad';
+      for (let i = 1; i <= LIMITS.cycles[1]; i++) $('pkgSec' + i).textContent = '–';
+      updateRunEnabled(); return;
+    }
+    const starts = zs.length * p.bursts * p.cycles;
+    const plan = buildPlan(p, zs.length);
+    plan.perPass.forEach((s, i) => { $('pkgSec' + (i + 1)).textContent = s + ' s'; });
+    const total = secondsFrom(plan.runs, 0, p.wait);
+    el.className = 'estimate' + (starts > DAILY_API_LIMIT - 50 ? ' bad' : '');
+    el.textContent = zs.length
+      ? 'On time by pass: ' + plan.perPass.map((s, i) => 'P' + (i + 1) + ' ' + s + 's').join(', ') + '. ' +
+        zs.length + ' zone(s) × ' + p.bursts + ' burst(s) × ' + p.cycles + ' pass(es) = ' + starts +
+        ' zone runs. Total about ' + fmtDuration(total) + '. If started now, done around ' + clockAt(total) + '.' +
+        (demoMode ? ' (Demo: takes about ' + fmtDuration(total / DEMO_SPEED) + ' of real time.)' : '')
+      : 'No zones selected.';
+    updateRunEnabled();
+  }
+
+  function checklistDone() {
+    return Array.from($('checklist').querySelectorAll('input')).every((c) => c.checked);
+  }
+
+  function updateRunEnabled() {
+    if (currentRun) return;
+    let ok = checklistDone() && selectedZones().length > 0;
+    try { readParams(); } catch { ok = false; }
+    $('runBtn').disabled = !ok;
+  }
+
+  // ---------- run engine ----------
+  // Sleep that resolves early when the run is cancelled.
+  function sleep(ms, run, onTick) {
+    return new Promise((resolve) => {
+      if (run.cancelled) return resolve();
+      const scale = timeScale();                       // 60× in demo mode, 1× for real
+      const realMs = ms / scale;
+      const end = Date.now() + realMs;
+      const finish = () => { clearTimeout(t); clearInterval(tick); run.wake = null; $('countdown').textContent = ''; resolve(); };
+      const t = setTimeout(finish, realMs);
+      // countdown shows simulated seconds
+      const tick = setInterval(() => onTick && onTick(Math.ceil((end - Date.now()) * scale / 1000)), Math.max(100, 1000 / scale));
+      if (onTick) onTick(Math.ceil(ms / 1000));
+      run.wake = finish;
+    });
+  }
+  const countdown = (s) => { $('countdown').textContent = '(' + fmtDuration(s) + ')'; };
+
+  function setRunningUI(running) {
+    document.querySelectorAll('#step3 input, #step3 select, #runBtn, #changeBtn, #selectAllBtn, #selectNoneBtn, #demoExitBtn')
+      .forEach((el) => { el.disabled = running; });
+    $('stopBtn').hidden = !running;
+    $('stopBtn').disabled = false;
+    $('statusBar').hidden = !running;
+    $('keepAliveReminder').hidden = !running;
+    if (!running) updateRunEnabled();
+  }
+
+  async function acquireWakeLock() {
+    const note = $('keepAliveReminder');
+    if ('wakeLock' in navigator) {
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        note.textContent = '⚠️ The screen is being kept awake. Keep this tab in front. Browsers slow down timers in background tabs, which stretches out the wait times.';
+        return;
+      } catch { /* fall through */ }
+    }
+    note.textContent = '⚠️ This browser can\'t keep the screen awake. Change your sleep settings and keep this tab in front, or the cycle will stall.';
+  }
+  function releaseWakeLock() {
+    if (wakeLock) { wakeLock.release().catch(() => {}); wakeLock = null; }
+  }
+
+  async function startCycling() {
+    if (currentRun) return;                       // never allow two loops at once
+    const zs = selectedZones();
+    if (!zs.length) { showError('Please select at least one zone.'); return; }
+    if (!checklistDone()) { showError('Finish the pre-flight checklist first.'); return; }
+    let p;
+    try { p = readParams(); } catch (e) { showError(e.message); return; }
+
+    const run = { cancelled: false, wake: null, controller: null };
+    currentRun = run;
+    const runs = new Map(zs.map((z) => [z.id, 0]));
+
+    $('progressLog').textContent = '';
+    $('progressContainer').hidden = false;
+    setRunningUI(true);
+    await acquireWakeLock();
+
+    const totalStarts = zs.length * p.bursts * p.cycles;
+    const plan = buildPlan(p, zs.length);
+    if (demoMode) log('🧪 DEMO MODE: nothing is sent to Rachio. Times below are simulated; the clock runs ' + DEMO_SPEED + '× faster.');
+    log('Starting: ' + zs.map(zoneLabel).join(', '));
+    log('On time by pass: ' + plan.perPass.map((s, i) => 'P' + (i + 1) + ' ' + s + 's').join(', ') + '; rest ' + p.wait + 's; ' +
+        p.bursts + ' burst(s) per zone. ' + totalStarts + ' zone runs, about ' + fmtDuration(secondsFrom(plan.runs, 0, p.wait)) +
+        '. Press STOP at any time.\n');
+
+    let consecutiveErrors = 0;
+    let outcome = 'Completed';
+    let k = 0;
+    try {
+      outer:
+      for (let cycle = 1; cycle <= p.cycles; cycle++) {
+        for (let i = 0; i < zs.length; i++) {
+         for (let burst = 1; burst <= p.bursts; burst++) {
+          if (run.cancelled) { outcome = 'Stopped by user'; break outer; }
+          const z = zs[i];
+          k++;
+          const isLast = k === totalStarts;
+          const where = 'Pass ' + cycle + '/' + p.cycles + ' · Zone ' + (i + 1) + ' of ' + zs.length +
+                        (p.bursts > 1 ? ' · burst ' + burst + '/' + p.bursts : '');
+          const onTime = plan.perPass[cycle - 1];
+          const left = secondsFrom(plan.runs, k - 1, p.wait);
+          $('progressText').textContent = where + ' · run ' + k + ' of ' + totalStarts + ' · about ' +
+                                          fmtDuration(left) + ' left, done around ' + clockAt(left);
+          document.title = '▶ Zone ' + z.zoneNumber + ' (' + k + '/' + totalStarts + ') · ' + BASE_TITLE;
+
+          setStatus('Starting ' + zoneLabel(z));
+          log(where + ': starting ' + zoneLabel(z) + ' for ' + onTime + 's');
+          let started = false;
+          try {
+            await api('PUT', '/zone/start', { id: z.id, duration: onTime }, run);
+            started = true;
+            consecutiveErrors = 0;
+            runs.set(z.id, runs.get(z.id) + 1);
+          } catch (e) {
+            if (run.cancelled) { outcome = 'Stopped by user'; break outer; }
+            consecutiveErrors++;
+            log('ERROR starting ' + zoneLabel(z) + ': ' + e.message);
+            if (e.status === 401 || e.status === 429 || consecutiveErrors >= MAX_CONSECUTIVE_ERRORS) {
+              outcome = 'Aborted after errors';
+              log('Aborting. ' + (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS ? consecutiveErrors + ' errors in a row.' : 'This error can\'t be retried.'));
+              break outer;
+            }
+          }
+
+          if (started) {
+            setStatus('Blowing out ' + zoneLabel(z));
+            await sleep(onTime * 1000, run, countdown);
+          }
+          if (!isLast && p.wait > 0 && !run.cancelled) {
+            setStatus('Compressor rest, all valves closed');
+            log('Resting ' + p.wait + 's for compressor to recharge...');
+            await sleep(p.wait * 1000, run, countdown);
+          }
+         }
         }
+      }
+      if (run.cancelled && outcome === 'Completed') outcome = 'Stopped by user';
+    } catch (e) {
+      outcome = 'Aborted';
+      log('Unexpected error: ' + e.message);
+    } finally {
+      // Always tell the controller to stop, whatever happened above.
+      setStatus('Stopping all watering on controller...');
+      try {
+        await api('PUT', '/device/stop_water', { id: selectedDevice.id });
+        log('Controller stop command sent.');
+      } catch (e) {
+        log('WARNING: could not send stop command (' + e.message + '). Check the Rachio app and stop the controller there.');
+      }
+      log(outcome + '. Runs: ' + zs.map((z) => 'Zone ' + z.zoneNumber + ': ' + runs.get(z.id) + 'x').join(', '));
+      document.title = (outcome === 'Completed' ? '✔ Done · ' : '■ ' + outcome + ' · ') + BASE_TITLE;
+      $('progressText').textContent = '';
+      chime(outcome === 'Completed');
+      releaseWakeLock();
+      currentRun = null;
+      setRunningUI(false);
+      $('progressLog').focus({ preventScroll: true });
+    }
+  }
 
-        function showButtonSpinner(buttonId, show) {
-            const button = document.getElementById(buttonId);
-            const existingSpinner = button.querySelector('.spinner');
+  // Audible end-of-run signal: rising tones = finished, low tones = stopped/aborted.
+  function chime(ok) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const notes = ok ? [523, 659, 784] : [330, 262, 196];
+      notes.forEach((f, n) => {
+        const o = ctx.createOscillator(), g = ctx.createGain();
+        o.frequency.value = f;
+        o.connect(g); g.connect(ctx.destination);
+        const t = ctx.currentTime + n * 0.35;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.3, t + 0.03);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+        o.start(t); o.stop(t + 0.32);
+      });
+      setTimeout(() => ctx.close(), 1500);
+    } catch { /* no audio available */ }
+  }
 
-            if (show && !existingSpinner) {
-                button.disabled = true;
-                const spinner = document.createElement('span');
-                spinner.className = 'spinner';
-                button.appendChild(spinner);
-            } else if (!show && existingSpinner) {
-                button.disabled = false;
-                existingSpinner.remove();
-            }
-        }
+  function stopCycling() {
+    const run = currentRun;
+    if (!run || run.cancelled) return;
+    run.cancelled = true;
+    $('stopBtn').disabled = true;
+    setStatus('Stopping...');
+    log('STOP pressed.');
+    if (run.controller) run.controller.abort();   // kill any in-flight start request
+    if (run.wake) run.wake();                      // cut any sleep short
+  }
 
-        async function makeRequest(method, endpoint, data = null) {
-            const url = API_BASE_URL + endpoint;
-            const options = {
-                method: method,
-                headers: {
-                    'Authorization': 'Bearer ' + apiKey,
-                    'Content-Type': 'application/json'
-                }
-            };
+  // ---------- wiring ----------
+  document.addEventListener('DOMContentLoaded', () => {
+    $('scriptBlocked').hidden = true;   // if you can see that banner, this line never ran
+    showStep(1);
+    initKeyStep();
+    $('submitControllerBtn').addEventListener('click', submitController);
+    $('runBtn').addEventListener('click', startCycling);
+    $('stopBtn').addEventListener('click', stopCycling);
+    $('selectAllBtn').addEventListener('click', () => { $('zoneList').querySelectorAll('input').forEach((c) => { c.checked = true; }); updateEstimate(); });
+    $('selectNoneBtn').addEventListener('click', () => { $('zoneList').querySelectorAll('input').forEach((c) => { c.checked = false; }); updateEstimate(); });
+    document.querySelectorAll('[data-back]').forEach((b) => b.addEventListener('click', () => { if (!currentRun) { endDemo(); showStep(1); } }));
+    ['runDuration', 'waitDuration', 'burstsPerZone', 'pkgPct1', 'pkgPct2', 'pkgPct3', 'pkgPct4'].forEach((id) => $(id).addEventListener('input', updateEstimate));
+    $('totalCycles').addEventListener('change', updateEstimate);
+    syncPackageRows();
+    $('checklist').addEventListener('change', updateRunEnabled);
 
-            if (data) {
-                options.body = JSON.stringify(data);
-            }
-
-            const response = await fetch(url, options);
-
-            if (!response.ok) {
-                throw new Error('API request failed: ' + response.statusText);
-            }
-
-            // Handle 204 No Content
-            if (response.status === 204 || response.headers.get('content-length') === '0') {
-                return null;
-            }
-
-            return await response.json();
-        }
-
-        async function submitApiKey() {
-            const key = document.getElementById('apiKey').value.trim();
-            if (!key) {
-                showError('Please enter your API key');
-                return;
-            }
-
-            apiKey = key;
-            localStorage.setItem('rachioApiKey', key);
-
-            showButtonSpinner('submitApiKeyBtn', true);
-
-            try {
-                // Get person info
-                const personInfo = await makeRequest('GET', '/person/info');
-                const personId = personInfo.id;
-
-                // Get person details to get devices
-                const personDetails = await makeRequest('GET', '/person/' + personId);
-                const devices = personDetails.devices || [];
-
-                if (devices.length === 0) {
-                    showError('No controllers found for this account');
-                    showButtonSpinner('submitApiKeyBtn', false);
-                    return;
-                }
-
-                if (devices.length === 1) {
-                    // Auto-select single device
-                    selectedDevice = devices[0];
-                    await loadZones();
-                } else {
-                    // Show controller selection
-                    const select = document.getElementById('controllerSelect');
-                    select.innerHTML = '<option value="">Choose a controller...</option>';
-                    devices.forEach((device, index) => {
-                        const option = document.createElement('option');
-                        option.value = index;
-                        option.textContent = device.name || 'Controller ' + (index + 1);
-                        select.appendChild(option);
-                    });
-
-                    // Store devices for later
-                    window.availableDevices = devices;
-                    showButtonSpinner('submitApiKeyBtn', false);
-                    showStep(2);
-                }
-            } catch (error) {
-                showError('Error: ' + error.message);
-                showButtonSpinner('submitApiKeyBtn', false);
-            }
-        }
-
-        async function submitController() {
-            const selectIndex = document.getElementById('controllerSelect').value;
-            if (selectIndex === '') {
-                showError('Please select a controller');
-                return;
-            }
-
-            showButtonSpinner('submitControllerBtn', true);
-            selectedDevice = window.availableDevices[parseInt(selectIndex)];
-            await loadZones();
-        }
-
-        async function loadZones() {
-            try {
-                const deviceDetails = await makeRequest('GET', '/device/' + selectedDevice.id);
-                zones = deviceDetails.zones || [];
-
-                if (zones.length === 0) {
-                    showError('No zones found on this controller');
-                    showButtonSpinner('submitApiKeyBtn', false);
-                    showButtonSpinner('submitControllerBtn', false);
-                    return;
-                }
-
-                // Sort zones by zone number
-                zones.sort((a, b) => a.zoneNumber - b.zoneNumber);
-
-                // Check if all zones are enabled
-                const allEnabled = zones.every(zone => zone.enabled !== false);
-
-                // Build zone map and display
-                const zoneList = document.getElementById('zoneList');
-                zoneList.innerHTML = '';
-
-                zones.forEach(zone => {
-                    const zoneNum = zone.zoneNumber;
-                    const zoneName = zone.name || '';
-                    const enabled = zone.enabled !== false;
-
-                    zoneMap[zoneNum] = {
-                        id: zone.id,
-                        name: zoneName,
-                        enabled: enabled
-                    };
-
-                    const zoneItem = document.createElement('div');
-                    zoneItem.className = 'zone-item';
-
-                    // Make entire zone item clickable
-                    zoneItem.onclick = function() {
-                        checkbox.checked = !checkbox.checked;
-                    };
-
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.id = 'zone' + zoneNum;
-                    checkbox.value = zoneNum;
-                    if (enabled) {
-                        checkbox.checked = true;
-                    }
-
-                    const label = document.createElement('label');
-                    label.htmlFor = 'zone' + zoneNum;
-
-                    let displayName = 'Zone ' + zoneNum;
-                    if (zoneName && zoneName !== 'Zone ' + zoneNum) {
-                        displayName += ' (' + zoneName + ')';
-                    }
-                    label.textContent = displayName;
-
-                    zoneItem.appendChild(checkbox);
-                    zoneItem.appendChild(label);
-
-                    // Only show status badges if not all zones are enabled
-                    if (!allEnabled) {
-                        const status = document.createElement('span');
-                        status.className = 'zone-status ' + (enabled ? 'enabled' : 'disabled');
-                        status.textContent = enabled ? 'Enabled' : 'Disabled';
-                        zoneItem.appendChild(status);
-                    }
-
-                    zoneList.appendChild(zoneItem);
-                });
-
-                showButtonSpinner('submitApiKeyBtn', false);
-                showButtonSpinner('submitControllerBtn', false);
-                showStep(3);
-            } catch (error) {
-                showError('Error loading zones: ' + error.message);
-                showButtonSpinner('submitApiKeyBtn', false);
-                showButtonSpinner('submitControllerBtn', false);
-            }
-        }
-
-        function formatZoneDisplay(zoneNum, zoneInfo) {
-            if (zoneInfo.name && zoneInfo.name !== 'Zone ' + zoneNum) {
-                return 'Zone ' + zoneNum + ' (' + zoneInfo.name + ')';
-            }
-            return 'Zone ' + zoneNum;
-        }
-
-        function logProgress(message) {
-            const log = document.getElementById('progressLog');
-            const timestamp = new Date().toLocaleString('en-US', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            }).replace(',', '');
-
-            log.textContent += '[' + timestamp + '] ' + message + '\n';
-            log.scrollTop = log.scrollHeight;
-        }
-
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        async function startCycling() {
-            // Get selected zones
-            const checkboxes = document.querySelectorAll('#zoneList input[type="checkbox"]:checked');
-            selectedZones = Array.from(checkboxes).map(cb => parseInt(cb.value));
-
-            if (selectedZones.length === 0) {
-                showError('Please select at least one zone');
-                return;
-            }
-
-            // Get parameters
-            const runDuration = parseInt(document.getElementById('runDuration').value);
-            const waitDuration = parseInt(document.getElementById('waitDuration').value);
-            const totalCycles = parseInt(document.getElementById('totalCycles').value);
-
-            if (runDuration <= 0) {
-                showError('Run duration must be greater than 0');
-                return;
-            }
-
-            if (waitDuration < 0) {
-                showError('Wait duration must be 0 or greater');
-                return;
-            }
-
-            if (totalCycles <= 0) {
-                showError('Total cycles must be greater than 0');
-                return;
-            }
-
-            // Initialize run counts
-            runCounts = {};
-            selectedZones.forEach(z => runCounts[z] = 0);
-
-            // Disable inputs and show stop button
-            document.querySelectorAll('input, select, #runBtn').forEach(el => el.disabled = true);
-            document.getElementById('stopBtn').style.display = 'inline-block';
-            document.getElementById('keepAliveReminder').classList.add('show');
-            document.getElementById('progressContainer').style.display = 'block';
-            document.getElementById('progressLog').textContent = '';
-
-            isRunning = true;
-            shouldStop = false;
-            isStopping = false;
-
-            logProgress('Starting to cycle through zones [' + selectedZones.join(', ') + '] for ' + totalCycles + ' runs each');
-            logProgress('Run duration: ' + runDuration + ' seconds, Wait duration: ' + waitDuration + ' seconds');
-            logProgress('Press Stop to halt cycling\n');
-
-            try {
-                while (isRunning && !shouldStop) {
-                    for (let i = 0; i < selectedZones.length && !shouldStop; i++) {
-                        const zoneNum = selectedZones[i];
-                        const zoneInfo = zoneMap[zoneNum];
-
-                        runCounts[zoneNum]++;
-
-                        const zoneDisplay = formatZoneDisplay(zoneNum, zoneInfo);
-                        logProgress('Starting ' + zoneDisplay + ' for ' + runDuration + ' seconds (Run #' + runCounts[zoneNum] + ')');
-
-                        // Start the zone
-                        try {
-                            await makeRequest('PUT', '/zone/start', {
-                                id: zoneInfo.id,
-                                duration: runDuration
-                            });
-                        } catch (error) {
-                            logProgress('Error starting zone: ' + error.message);
-                            continue;
-                        }
-
-                        // Wait for run duration
-                        await sleep(runDuration * 1000);
-			
-                        // Check if we're done cycling
-                        if (i === selectedZones.length - 1 && runCounts[zoneNum] === totalCycles) {
-                            await stopCycling();
-                        }
-
-                        // Wait before next zone
-                        if (waitDuration > 0 && !shouldStop) {
-                            logProgress('Waiting ' + waitDuration + ' seconds before next zone...\n');
-                            await sleep(waitDuration * 1000);
-                        }
-                    }
-                }
-
-            } catch (error) {
-                logProgress('Error: ' + error.message);
-            }
-        }
-
-        async function stopCycling() {
-            if (isStopping) return; // Prevent multiple stop calls
-
-            isStopping = true;
-            shouldStop = true;
-
-            // Show spinner in stop button
-            showButtonSpinner('stopBtn', true);
-
-            // Try to stop any currently running watering on the device
-            try {
-                logProgress('Stopping all watering on device...');
-                await makeRequest('PUT', '/device/stop_water', {
-                    id: selectedDevice.id
-                });
-                logProgress('Device watering stopped');
-            } catch (error) {
-                logProgress('Note: Could not stop device watering: ' + error.message);
-            }
-
-            // Print final summary
-            const counts = selectedZones.map(z => 'Zone ' + z + ': ' + runCounts[z] + 'x').join(', ');
-            logProgress('Completed. Total runs: ' + counts);
-
-            isRunning = false;
-
-            cleanupAfterStop();
-        }
-
-        function cleanupAfterStop() {
-            // Re-enable inputs
-            document.querySelectorAll('input, select, #runBtn').forEach(el => el.disabled = false);
-            showButtonSpinner('stopBtn', false);
-            document.getElementById('stopBtn').style.display = 'none';
-            document.getElementById('keepAliveReminder').classList.remove('show');
-            isStopping = false;
-        }
-    </script>
+    // Re-grab the wake lock when the tab comes back (browsers drop it when hidden).
+    document.addEventListener('visibilitychange', () => {
+      if (currentRun && document.visibilityState === 'visible' && !wakeLock) acquireWakeLock();
+    });
+    window.addEventListener('beforeunload', (e) => {
+      if (currentRun) { e.preventDefault(); e.returnValue = ''; }
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && currentRun) stopCycling(); });
+  });
+})();
+</script>
 </body>
 </html>
